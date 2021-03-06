@@ -5,6 +5,7 @@
 #include "main.h"
 
 
+
 #define min(a, b)				(((a) < (b)) ? (a) : (b))
 
 void fifo_init(ST_UART_FIFO *fifo)
