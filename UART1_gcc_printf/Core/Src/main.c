@@ -19,13 +19,13 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "quadspi.h"
+#include "dma.h"
 #include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "user_qspi_flash.h"
+#include "user_uart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,8 +44,10 @@
 
 /* Private variables ---------------------------------------------------------*/
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "EndlessLoop"
 /* USER CODE BEGIN PV */
-
+ST_UART_FIFO st_uart1;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -66,14 +68,8 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  uint32_t location1=0;
-  uint32_t location2=4096;
-  uint32_t W25xID;
-  uint16_t ReadData[]={0};
-  uint16_t ReadData_1[]={0};
-  uint8_t writeData[]={"welcome to IoT"};
-  uint8_t writeData_1[]={"第一个QuadSPI实验"};
-
+  uint8_t ch_temp;
+  //st_uart1 = fifo_init();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -94,16 +90,23 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_QUADSPI_Init();
+  MX_DMA_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  hal_spi_flash_read(ReadData,sizeof(writeData),0);//读0位的数据
+  HAL_UART_Receive_IT(&huart1, &Rdata,1);
+  fifo_init(&st_uart1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
+    if(st_uart1.rx_counter > 0)
+    {
+        __fifo_get(&st_uart1,&ch_temp,1);
+        HAL_UART_Transmit(&huart1,&ch_temp,1,0x01);
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -198,3 +201,5 @@ void assert_failed(uint8_t *file, uint32_t line)
 #endif /* USE_FULL_ASSERT */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+#pragma clang diagnostic pop
