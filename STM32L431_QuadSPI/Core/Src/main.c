@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "user_qspi_flash.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -66,6 +66,13 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+  uint32_t location1=0;
+  uint32_t location2=4096;
+  uint32_t W25xID;
+  uint16_t ReadData[]={0};
+  uint16_t ReadData_1[]={0};
+  uint8_t writeData[]={"welcome to IoT"};
+  uint8_t writeData_1[]={"第一个QuadSPI实验"};
 
   /* USER CODE END 1 */
 
@@ -90,7 +97,7 @@ int main(void)
   MX_QUADSPI_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  hal_spi_flash_read(ReadData,sizeof(writeData),0);//读0位的数据
   /* USER CODE END 2 */
 
   /* Infinite loop */
