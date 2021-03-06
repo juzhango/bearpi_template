@@ -26,6 +26,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "user_uart.h"
+#include "user_debug.h"
+
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,6 +51,7 @@
 #pragma ide diagnostic ignored "EndlessLoop"
 /* USER CODE BEGIN PV */
 ST_UART_FIFO st_uart1;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -68,8 +72,9 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  uint8_t ch_temp;
-  //st_uart1 = fifo_init();
+    int c = 55;
+    uint8_t *s = "qwer";
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -93,20 +98,18 @@ int main(void)
   MX_DMA_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+  
   HAL_UART_Receive_IT(&huart1, &Rdata,1);
   fifo_init(&st_uart1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-    if(st_uart1.rx_counter > 0)
-    {
-        __fifo_get(&st_uart1,&ch_temp,1);
-        HAL_UART_Transmit(&huart1,&ch_temp,1,0x01);
-    }
+    u_print("loca:%d,WER%s\r\n",c,s);
+    HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
